@@ -641,14 +641,19 @@ document.addEventListener('DOMContentLoaded', function() {
     with open(js_path, 'w') as f:
         f.write(js_content)
     
-    return jsonify({'message': 'Template files created successfully'})
+    print("Template files created successfully")
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+if __name__ == "__main__":
+    import os
     
+    port = int(os.environ.get("PORT", 10000))
+
     # Create template files if they don't exist
-    if not os.path.exists(os.path.join(os.path.dirname(__file__), 'templates', 'index.html')):
+    template_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+
+    if not os.path.exists(template_path):
+        print("Templates not found. Creating template files...")
         create_template()
-    
-    # Use 0.0.0.0 to make the server externally visible
-    app.run(host='0.0.0.0', port=port, debug=True) 
+
+    # Start the Flask server
+    app.run(host="0.0.0.0", port=port)
