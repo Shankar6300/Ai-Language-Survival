@@ -85,7 +85,7 @@ CONVERSATIONS = {}
 @app.route('/')
 def home():
     """Render the chat interface"""
-    return render_template('index.html')
+    return {"message": "AI Language Survival API is running"}
 
 @app.route('/api/detect', methods=['POST'])
 def detect_language():
