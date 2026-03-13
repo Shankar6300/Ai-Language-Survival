@@ -103,11 +103,14 @@ def translate_text():
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        # Use MyMemory API since libretranslate.de disabled its free tier
-        url = "https://api.mymemory.translated.net/get"
+        # Use Google Translate API (client=gtx) for robust 'auto' detection support
+        url = "https://translate.googleapis.com/translate_a/single"
         params = {
-            "q": text,
-            "langpair": f"{source_lang}|{target_lang}"
+            "client": "gtx",
+            "dt": "t",
+            "sl": source_lang,
+            "tl": target_lang,
+            "q": text
         }
 
         response = requests.get(url, params=params)
@@ -115,7 +118,8 @@ def translate_text():
 
         try:
             result = response.json()
-            translated_text = result.get("responseData", {}).get("translatedText", text)
+            # result[0] is a list of sentences/segments translated
+            translated_text = "".join([s[0] for s in result[0]])
         except Exception:
             translated_text = text
 
