@@ -116,8 +116,12 @@ def translate_text():
         response = requests.post(url, json=payload)
         response.raise_for_status()
 
-        result = response.json()
-        translated_text = result.get("translatedText", text)
+        try:
+            result = response.json()
+            translated_text = result.get("translatedText", text)
+        except Exception:
+            # libretranslate.de currently returns HTML on free nodes, catch the JSONDecodeError
+            translated_text = text
 
         return jsonify({
             "translated_text": translated_text
