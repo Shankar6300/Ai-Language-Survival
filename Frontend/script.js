@@ -531,11 +531,21 @@ function translateWithAPI(text, fromLang, toLang) {
         showFeedback("Translating...");
         
         // Use Google Translate API
-        const googleApiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${fromLang}&tl=${toLang}&q=${encodeURIComponent(text)}`;
+        const googleApiUrl = "https://ai-language-survival.onrender.com/translate";
         
         console.log('Fetching translation from Google API URL:', googleApiUrl);
         
-        fetch(googleApiUrl)
+        fetch(googleApiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: text,
+                from: fromLang,
+                to: toLang
+            })
+           })
             .then(response => {
                 console.log('Google API response status:', response.status);
                 if (!response.ok) {
@@ -543,33 +553,24 @@ function translateWithAPI(text, fromLang, toLang) {
                 }
                 return response.json();
             })
-            .then(data => {
-                console.log('Google Translation API response data:', data);
-                
-                if (data && data[0]) {
-                    let translatedText = '';
-                    
-                    // Extract translated text from the response
-                    for (let i = 0; i < data[0].length; i++) {
-                        if (data[0][i][0]) {
-                            translatedText += data[0][i][0];
-                        }
-                    }
-                    
-                    console.log('Extracted translated text from Google:', translatedText);
-                    
-                    if (translationResult) {
-                        translationResult.textContent = translatedText;
-                    } else {
-                        console.error('Translation result element not found');
-                    }
-                    
-                    showFeedback("Translation complete (Google API)");
-                    resolve(translatedText);
-                } else {
-                    throw new Error('Invalid Google translation response format');
-                }
-            })
+.then(data => {
+    console.log('API response data:', data);
+
+    let translatedText = data.translatedText || data.translation || data.result;
+
+    if (!translatedText) {
+        throw new Error("Invalid API response format");
+    }
+
+    console.log('Extracted translated text:', translatedText);
+
+    if (translationResult) {
+        translationResult.textContent = translatedText;
+    }
+
+    showFeedback("Translation complete");
+    resolve(translatedText);
+})
             .catch(error => {
                 console.error('Google Translation error:', error);
                 
