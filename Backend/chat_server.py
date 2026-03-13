@@ -87,40 +87,6 @@ def home():
     """Render the chat interface"""
     return {"message": "AI Language Survival API is running"}
 
-@app.route('/api/detect', methods=['POST'])
-def detect_language():
-    """
-    Detect the language of the provided text
-    """
-    try:
-        data = request.get_json()
-        text = data.get('q', '')
-        
-        if not text:
-            return jsonify({'error': 'No text provided'}), 400
-        
-        # Use MyMemory API for language detection
-        api_url = f"https://api.mymemory.translated.net/get?q={text}&langpair=auto|en"
-        
-        response = requests.get(api_url)
-        response.raise_for_status()
-        
-        # Parse the response
-        result = response.json()
-        
-        # Extract detected language
-        if result and 'responseData' in result and 'detectedLanguage' in result['responseData']:
-            detected_lang = result['responseData']['detectedLanguage']
-            # Extract language code (first 2 characters)
-            lang_code = detected_lang.split('|')[0].strip()[:2].lower()
-            return jsonify({'language': lang_code})
-        else:
-            # Default to English if detection fails
-            return jsonify({'language': 'en', 'note': 'Detection failed, defaulting to English'})
-    
-    except Exception as e:
-        print(f"Error detecting language: {str(e)}")
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/translate', methods=['POST'])
 def translate_text():
@@ -128,11 +94,11 @@ def translate_text():
     Translate text from source language to target language
     """
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
 
-        text = data.get('text', '')
-        source_lang = data.get('from', 'auto')
-        target_lang = data.get('to', 'en')
+        text = data.get('text')
+        source_lang = data.get('source', 'auto')
+        target_lang = data.get('target', 'en')
 
         if not text:
             return jsonify({'error': 'No text provided'}), 400
@@ -154,9 +120,7 @@ def translate_text():
         translated_text = result.get("translatedText", text)
 
         return jsonify({
-            "translated_text": translated_text,
-            "source": source_lang,
-            "target": target_lang
+            "translated_text": translated_text
         })
 
     except Exception as e:

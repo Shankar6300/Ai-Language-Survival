@@ -418,64 +418,18 @@ function translateText() {
         showDebugInfo('Error: Translation result element not found');
     }
     
-    // Set a timeout to ensure we always get a response, even if APIs hang
-    const fallbackTimer = setTimeout(() => {
-        if (translationResult && translationResult.textContent === "Translating...") {
-            console.log('Translation taking too long, using emergency fallback');
-            showDebugInfo('Translation timeout - emergency fallback');
-            const fallbackText = getFallbackTranslation(userInput.value, fromLanguage, toLanguage);
-            translationResult.textContent = fallbackText + " (Emergency fallback)";
-            showFeedback("Translation timeout - used fallback");
-        }
-    }, 15000); // 15 seconds timeout
-    
-    if (fromLanguage === 'auto') {
-        console.log('Auto detection enabled, detecting language first');
-        showDebugInfo('Auto-detecting language');
-        // First detect the language
-        detectLanguageAPI(userInput.value)
-            .then(detectedLang => {
-                console.log(`Language detected: ${detectedLang}`);
-                showDebugInfo(`Detected: ${getLanguageName(detectedLang)}`);
-                showFeedback(`Detected language: ${getLanguageName(detectedLang)}`);
-                // Then translate with the detected language
-                translateWithAPI(userInput.value, detectedLang, toLanguage);
-            })
-            .catch(error => {
-                console.error('Language detection error:', error);
-                showDebugInfo(`Detection error: ${error.message}`);
-                if (translationResult) {
-                    translationResult.textContent = "Error detecting language. Please try again.";
-                }
-                showFeedback("Error detecting language");
-                
-                // Try direct translation without detection
-                console.log('Falling back to default language (English) for translation');
-                showDebugInfo('Falling back to English as source');
-                translateWithAPI(userInput.value, 'en', toLanguage);
-            })
-            .finally(() => {
-                clearTimeout(fallbackTimer);
-            });
-    } else {
-        console.log('Using specified source language, translating directly');
-        // Translate directly with the selected source language
-        translateWithAPI(userInput.value, fromLanguage, toLanguage)
-            .then(result => {
-                showDebugInfo('Translation completed successfully');
-            })
-            .catch(error => {
-                console.error('Final translation error:', error);
-                showDebugInfo(`Translation error: ${error.message}`);
-                if (translationResult) {
-                    const fallbackText = getFallbackTranslation(userInput.value, fromLanguage, toLanguage);
-                    translationResult.textContent = fallbackText + " (Error fallback)";
-                }
-            })
-            .finally(() => {
-                clearTimeout(fallbackTimer);
-            });
-    }
+    translateWithAPI(userInput.value, fromLanguage, toLanguage)
+        .then(result => {
+             showDebugInfo('Translation completed successfully');
+        })
+        .catch(error => {
+            console.error('Final translation error:', error);
+            showDebugInfo(`Translation error: ${error.message}`);
+            if (translationResult) {
+                const fallbackText = getFallbackTranslation(userInput.value, fromLanguage, toLanguage);
+                translationResult.textContent = fallbackText + " (Error fallback)";
+            }
+        });
 }
 
 // Add fallback translation for testing
@@ -562,278 +516,12 @@ function translateWithAPI(text, fromLang, toLang) {
     });
 }
 
-// Modify tryAlternateGoogleEndpoint to return a promise
-function tryAlternateGoogleEndpoint(text, fromLang, toLang, forceTranslate = false) {
-    console.log('Trying alternate Google Translate endpoint');
-    
-    return new Promise((resolve, reject) => {
-        // Alternative endpoints with different parameters
-        let altGoogleUrl;
-        
-        if (forceTranslate && fromLang === 'te') {
-            // Special case for Telugu - try the official translate.google.com endpoint
-            // with more parameters to force actual translation
-            altGoogleUrl = `https://translate.googleapis.com/translate_a/t?client=gtx&sl=${fromLang}&tl=${toLang}&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=bh&ssel=0&tsel=0&kc=1&q=${encodeURIComponent(text)}`;
-        } else {
-            altGoogleUrl = `https://translate.google.com/translate_a/single?client=at&dt=t&sl=${fromLang}&tl=${toLang}&q=${encodeURIComponent(text)}`;
-        }
-        
-        fetch(altGoogleUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Alternate Google endpoint failed');
-                }
-                return response.json();
-            })
-           .then(data => {
-
-    console.log("Backend response:", data);
-
-    if (data.translated_text) {
-
-        const translatedText = data.translated_text;
-
-        if (translationResult) {
-            translationResult.textContent = translatedText;
-        }
-
-        showFeedback("Translation complete");
-        resolve(translatedText);
-
-    } else {
-        throw new Error("Invalid response from backend");
-    }
-
-})
-                    
-                    if (translationResult) {
-                        translationResult.textContent = translatedText;
-                        showFeedback("Translation complete (alternate API)");
-                    }
-                    resolve(translatedText);
-                } else {
-                    throw new Error('Invalid response from alternate endpoint');
-                }
-            })
-            .catch(error => {
-                console.error('Alternate endpoint error:', error);
-                
-                // Try MyMemory API as another fallback
-                translateWithMyMemory(text, fromLang, toLang)
-                    .then(resolve)
-                    .catch(reject);
-            });
-    });
-}
-
-// Language detection with improved multi-API approach
-function detectLanguageAPI(text) {
-    // Show loading state
-    showFeedback("Detecting language...");
-    
-    // Do quick script analysis for languages with distinctive scripts
-    if (text && text.length > 2) {
-        // Check for script-specific characters
-        if (/[\u0C00-\u0C7F]/.test(text)) return Promise.resolve('te'); // Telugu
-        if (/[\u0900-\u097F]/.test(text)) return Promise.resolve('hi'); // Hindi
-        if (/[\u0600-\u06FF]/.test(text)) return Promise.resolve('ar'); // Arabic
-        if (/[\u0400-\u04FF]/.test(text)) return Promise.resolve('ru'); // Cyrillic (Russian)
-        if (/[\u3040-\u309F]/.test(text)) return Promise.resolve('ja'); // Hiragana
-        if (/[\u30A0-\u30FF]/.test(text)) return Promise.resolve('ja'); // Katakana
-        if (/[\u4E00-\u9FFF]/.test(text)) {
-            // Chinese characters are used in multiple languages
-            // This is a simplified approach - in reality would need more analysis
-            return Promise.resolve('zh');
-        }
-        if (/[\uAC00-\uD7AF]/.test(text)) return Promise.resolve('ko'); // Korean
-    }
-    
-    // Try Google Translate for language detection
-    const googleApiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=auto&tl=en&q=${encodeURIComponent(text)}`;
-    
-    return fetch(googleApiUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Google API network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            if (data && data[2]) {
-                const detectedLang = data[2];
-                console.log('Google API detected language:', detectedLang);
-                return detectedLang;
-            } else {
-                throw new Error('Could not detect language with Google API');
-            }
-        })
-        .catch(error => {
-            console.error('Google language detection error:', error);
-            return detectWithMyMemory(text);
-        });
-}
-
-// Fallback language detection with MyMemory
-function detectWithMyMemory(text) {
-    console.log('Falling back to MyMemory for language detection');
-    // Use MyMemory API for language detection
-    const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|en`;
-    
-    return fetch(apiUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // The detected language will be in the response data
-            if (data && data.responseData && data.responseData.detectedLanguage) {
-                const detectedLang = data.responseData.detectedLanguage.match(/^([a-z]{2})/i)?.[1]?.toLowerCase() || 'en';
-                console.log('MyMemory detected language:', detectedLang);
-                return detectedLang;
-            } else {
-                console.error('Language detection failed, defaulting to English');
-                return 'en'; // Default to English if detection fails
-            }
-        })
-        .catch(error => {
-            console.error('MyMemory language detection error:', error);
-            return 'en'; // Default to English on error
-        });
-}
-
-// Language name mapping
-function getLanguageName(code) {
-    const languages = {
-        'auto': 'Auto Detect',
-        'en': 'English',
-        'es': 'Spanish',
-        'fr': 'French',
-        'de': 'German',
-        'it': 'Italian',
-        'ja': 'Japanese',
-        'zh': 'Chinese',
-        'ru': 'Russian',
-        'pt': 'Portuguese',
-        'ar': 'Arabic',
-        'hi': 'Hindi',
-        'ko': 'Korean',
-        'nl': 'Dutch',
-        'sv': 'Swedish',
-        'tr': 'Turkish',
-        'te': 'Telugu',
-        // Additional languages
-        'bn': 'Bengali',
-        'uk': 'Ukrainian',
-        'pl': 'Polish',
-        'vi': 'Vietnamese',
-        'th': 'Thai',
-        'id': 'Indonesian',
-        'ms': 'Malay',
-        'ta': 'Tamil',
-        'ur': 'Urdu',
-        'fa': 'Persian',
-        'he': 'Hebrew',
-        'el': 'Greek',
-        'fi': 'Finnish',
-        'da': 'Danish',
-        'no': 'Norwegian',
-        'hu': 'Hungarian',
-        'cs': 'Czech',
-        'ro': 'Romanian',
-        'bg': 'Bulgarian',
-        'hr': 'Croatian',
-        'sk': 'Slovak',
-        'sl': 'Slovenian',
-        'lt': 'Lithuanian',
-        'lv': 'Latvian',
-        'et': 'Estonian',
-        'is': 'Icelandic',
-        'ga': 'Irish',
-        'mt': 'Maltese',
-        'cy': 'Welsh',
-        'ka': 'Georgian',
-        'hy': 'Armenian',
-        'kk': 'Kazakh',
-        'uz': 'Uzbek',
-        'az': 'Azerbaijani',
-        'be': 'Belarusian',
-        'mk': 'Macedonian',
-        'mn': 'Mongolian',
-        'ne': 'Nepali',
-        'si': 'Sinhala',
-        'km': 'Khmer',
-        'lo': 'Lao',
-        'my': 'Burmese',
-        'jv': 'Javanese'
-    };
-    
-    return languages[code] || code;
-}
 
 // Helper function to detect Telugu text
 function isTeluguText(text) {
     // Telugu Unicode range: 0C00-0C7F
     const teluguPattern = /[\u0C00-\u0C7F]/;
     return teluguPattern.test(text);
-}
-
-// Translation with MyMemory API (fallback)
-function translateWithMyMemory(text, fromLang, toLang) {
-    console.log('Falling back to MyMemory API for translation');
-    
-    return new Promise((resolve, reject) => {
-        // Use MyMemory API for translation
-        const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
-        
-        console.log('Fetching translation from MyMemory API URL:', apiUrl);
-        
-        fetch(apiUrl)
-            .then(response => {
-                console.log('MyMemory API response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('MyMemory Translation API response was not ok: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('MyMemory Translation API response data:', data);
-                
-                if (data && data.responseData && data.responseData.translatedText) {
-                    const translatedText = data.responseData.translatedText;
-                    console.log('Extracted translated text from MyMemory:', translatedText);
-                    
-                    if (translationResult) {
-                        translationResult.textContent = translatedText;
-                    } else {
-                        console.error('Translation result element not found');
-                    }
-                    
-                    showFeedback("Translation complete (MyMemory API)");
-                    resolve(translatedText);
-                } else {
-                    throw new Error('Invalid MyMemory translation response format');
-                }
-            })
-            .catch(error => {
-                console.error('MyMemory Translation error:', error);
-                
-                // Final fallback to our simulation if all APIs fail
-                if (translationResult) {
-                    translationResult.textContent = "API error. Falling back to simulated translation...";
-                    
-                    setTimeout(() => {
-                        const fallbackTranslation = getFallbackTranslation(text, fromLang, toLang);
-                        translationResult.textContent = fallbackTranslation;
-                        console.log('Using fallback translation:', fallbackTranslation);
-                        resolve(fallbackTranslation); // Resolve the promise with the fallback translation
-                    }, 500);
-                } else {
-                    reject(error);
-                }
-                
-                showFeedback("Translation API error. Using fallback method.");
-            });
-    });
 }
 
 // Keep the original function as a fallback
@@ -1377,6 +1065,75 @@ function transliterateToArabic(text) {
     }
     
     return text;
+}
+
+// Language name mapping
+function getLanguageName(code) {
+    const languages = {
+        'auto': 'Auto Detect',
+        'en': 'English',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
+        'it': 'Italian',
+        'ja': 'Japanese',
+        'zh': 'Chinese',
+        'ru': 'Russian',
+        'pt': 'Portuguese',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'ko': 'Korean',
+        'nl': 'Dutch',
+        'sv': 'Swedish',
+        'tr': 'Turkish',
+        'te': 'Telugu',
+        // Additional languages
+        'bn': 'Bengali',
+        'uk': 'Ukrainian',
+        'pl': 'Polish',
+        'vi': 'Vietnamese',
+        'th': 'Thai',
+        'id': 'Indonesian',
+        'ms': 'Malay',
+        'ta': 'Tamil',
+        'ur': 'Urdu',
+        'fa': 'Persian',
+        'he': 'Hebrew',
+        'el': 'Greek',
+        'fi': 'Finnish',
+        'da': 'Danish',
+        'no': 'Norwegian',
+        'hu': 'Hungarian',
+        'cs': 'Czech',
+        'ro': 'Romanian',
+        'bg': 'Bulgarian',
+        'hr': 'Croatian',
+        'sk': 'Slovak',
+        'sl': 'Slovenian',
+        'lt': 'Lithuanian',
+        'lv': 'Latvian',
+        'et': 'Estonian',
+        'is': 'Icelandic',
+        'ga': 'Irish',
+        'mt': 'Maltese',
+        'cy': 'Welsh',
+        'ka': 'Georgian',
+        'hy': 'Armenian',
+        'kk': 'Kazakh',
+        'uz': 'Uzbek',
+        'az': 'Azerbaijani',
+        'be': 'Belarusian',
+        'mk': 'Macedonian',
+        'mn': 'Mongolian',
+        'ne': 'Nepali',
+        'si': 'Sinhala',
+        'km': 'Khmer',
+        'lo': 'Lao',
+        'my': 'Burmese',
+        'jv': 'Javanese'
+    };
+    
+    return languages[code] || code;
 }
 
 // Initialize speech recognition for voice input
