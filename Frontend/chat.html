@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translate - AI Language Survival Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-text">AI Language Survival Guide</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chat.html" class="active">Translate</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+        </nav>
+        <div class="auth-section">
+            <span id="user-greeting">Hello</span>
+            <a href="logout.html" id="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <main class="translator-container page-transition">
+        <div class="container">
+            <div class="translator-card">
+                <div class="language-controls">
+                    <div class="source-language">
+                        <label for="from-language" class="language-label">Source Language</label>
+                        <div class="language-selector">
+                            <i class="fas fa-microphone"></i>
+                            <select id="from-language">
+                                <option value="auto">Auto Detect</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese (Mandarin)</option>
+                                <option value="ru">Russian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ar">Arabic</option>
+                                <option value="hi">Hindi</option>
+                                <option value="ko">Korean</option>
+                                <option value="nl">Dutch</option>
+                                <option value="sv">Swedish</option>
+                                <option value="tr">Turkish</option>
+                                <option value="te">Telugu</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="swap-languages">
+                        <button id="swap-btn" title="Swap Languages"><i class="fas fa-exchange-alt"></i></button>
+                    </div>
+                    
+                    <div class="target-language">
+                        <label for="to-language" class="language-label">Target Language</label>
+                        <div class="language-selector">
+                            <i class="fas fa-volume-up"></i>
+                            <select id="to-language">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                                <option value="ja">Japanese</option>
+                                <option value="zh">Chinese (Mandarin)</option>
+                                <option value="ru">Russian</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="ar">Arabic</option>
+                                <option value="hi">Hindi</option>
+                                <option value="ko">Korean</option>
+                                <option value="nl">Dutch</option>
+                                <option value="sv">Swedish</option>
+                                <option value="tr">Turkish</option>
+                                <option value="te">Telugu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="translation-input">
+                    <div class="section-label">
+                        <h3>Input Text</h3>
+                    </div>
+                    <textarea id="user-input" placeholder="Type or paste text here..."></textarea>
+                    <div class="input-controls">
+                        <button id="voice-input-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+                        <button id="input-listen-btn" title="Listen to Input"><i class="fas fa-volume-up"></i></button>
+                        <button id="clear-input-btn" title="Clear Text"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                
+                <div class="translation-actions">
+                    <button id="translate-btn" class="btn btn-primary">
+                        <i class="fas fa-language"></i> Translate
+                    </button>
+                </div>
+                
+                <div class="translation-output">
+                    <div class="section-label">
+                        <h3>Translation</h3>
+                    </div>
+                    <div id="translation-result">Translation will appear here...</div>
+                    <div class="output-controls">
+                        <button id="copy-output-btn" title="Copy to Clipboard"><i class="fas fa-copy"></i></button>
+                        <button id="listen-output-btn" title="Text to Speech"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="translator-card phrase-categories-panel">
+                <h3>Quick Phrases</h3>
+                <div class="category-selector">
+                    <select id="phrase-category">
+                        <option value="greetings">Greetings</option>
+                        <option value="travel">Travel</option>
+                        <option value="dining">Dining</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="shopping">Shopping</option>
+                    </select>
+                </div>
+                
+                <div class="phrase-groups">
+                    <div class="phrase-group" id="greetings-phrases">
+                        <ul>
+                            <li><button class="phrase-btn">Hello, how are you?</button></li>
+                            <li><button class="phrase-btn">Good morning</button></li>
+                            <li><button class="phrase-btn">Nice to meet you</button></li>
+                            <li><button class="phrase-btn">How's your day going?</button></li>
+                            <li><button class="phrase-btn">Goodbye</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phrase-group" id="travel-phrases" style="display: none;">
+                        <ul>
+                            <li><button class="phrase-btn">Where is the train station?</button></li>
+                            <li><button class="phrase-btn">How much is a ticket to...?</button></li>
+                            <li><button class="phrase-btn">Can you call me a taxi?</button></li>
+                            <li><button class="phrase-btn">Is this the right way to...?</button></li>
+                            <li><button class="phrase-btn">What time does the bus arrive?</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phrase-group" id="dining-phrases" style="display: none;">
+                        <ul>
+                            <li><button class="phrase-btn">A table for two, please</button></li>
+                            <li><button class="phrase-btn">Can I see the menu?</button></li>
+                            <li><button class="phrase-btn">I'm vegetarian</button></li>
+                            <li><button class="phrase-btn">The check, please</button></li>
+                            <li><button class="phrase-btn">This is delicious!</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phrase-group" id="emergency-phrases" style="display: none;">
+                        <ul>
+                            <li><button class="phrase-btn">I need help!</button></li>
+                            <li><button class="phrase-btn">Call a doctor, please</button></li>
+                            <li><button class="phrase-btn">Where is the nearest hospital?</button></li>
+                            <li><button class="phrase-btn">I'm lost</button></li>
+                            <li><button class="phrase-btn">I've lost my passport</button></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="phrase-group" id="shopping-phrases" style="display: none;">
+                        <ul>
+                            <li><button class="phrase-btn">How much does this cost?</button></li>
+                            <li><button class="phrase-btn">Do you have this in another size?</button></li>
+                            <li><button class="phrase-btn">I'm just looking, thanks</button></li>
+                            <li><button class="phrase-btn">Do you accept credit cards?</button></li>
+                            <li><button class="phrase-btn">That's too expensive</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="voice-feedback">Listening...</div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AI Language Survival Guide. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

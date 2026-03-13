@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AI Language Survival Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-text">AI Language Survival Guide</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+        <div class="auth-section">
+            <a href="login.html" id="login-btn">Login</a>
+            <a href="register.html" id="register-btn">Register</a>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-form-container">
+            <h1>Create Your Account</h1>
+            <p>Join us and start your language learning journey</p>
+            
+            <form class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="phone" name="phone" placeholder="Phone Number" pattern="[0-9]{10}" required>
+                    <small class="form-hint">Enter a 10-digit phone number</small>
+                </div>
+                <div class="form-group">
+                    <label for="dob" class="form-label">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Password" pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{6,}$" required>
+                    <small class="form-hint">Password must be at least 6 characters and include one capital letter, one number, and one special character</small>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Sign up</button>
+            </form>
+            
+            <div class="social-login">
+                <p class="or-divider"><span>or</span></p>
+                <div id="g_id_onload"
+                     data-client_id="335381426176-f0oq3dhee73g45i80u3kneotq462jmsm.apps.googleusercontent.com"
+                     data-context="signup"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleSignUp"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signup_with"
+                     data-size="large"
+                     data-logo_alignment="center"
+                     data-width="280">
+                </div>
+            </div>
+            
+            <p class="auth-redirect">Already have an account? <a href="login.html">Sign in</a></p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AI Language Survival Guide. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phrases - AI Language Survival Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-text">AI Language Survival Guide</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chat.html">Chat</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+        </nav>
+        <div class="auth-section">
+            <span id="user-greeting">Hello, dhruv</span>
+            <a href="logout.html" id="logout-btn">Logout</a>
+        </div>
+    </header>
+
+    <main class="phrases-container">
+        <section class="favorite-phrases">
+            <h2>Favorite Phrases</h2>
+            <div class="phrases-content">
+                <!-- Favorite phrases will be loaded here -->
+            </div>
+        </section>
+
+        <section class="common-phrases">
+            <h2>Common Phrases</h2>
+            <div class="category-selector">
+                <select id="phrase-category">
+                    <option value="all">All Categories</option>
+                    <option value="greetings">Greetings</option>
+                    <option value="directions">Directions</option>
+                    <option value="emergency">Emergency</option>
+                    <option value="food">Food & Dining</option>
+                </select>
+            </div>
+            <div class="phrases-list">
+                <!-- Phrases will be loaded here based on selected category -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AI Language Survival Guide. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

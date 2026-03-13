@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Language Survival Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-text">AI Language Survival Guide</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+        <div class="auth-section">
+            <a href="login.html" id="login-btn">Login</a>
+            <a href="register.html" id="register-btn">Register</a>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-form-container">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue your language learning journey</p>
+            
+            <form class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Sign in</button>
+            </form>
+            
+            <div class="social-login">
+                <p class="or-divider"><span>or</span></p>
+                <div id="g_id_onload"
+                     data-client_id="335381426176-f0oq3dhee73g45i80u3kneotq462jmsm.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleSignIn"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="center"
+                     data-width="280">
+                </div>
+            </div>
+            
+            <p class="auth-redirect">Don't have an account? <a href="register.html">Sign up</a></p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 AI Language Survival Guide. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
