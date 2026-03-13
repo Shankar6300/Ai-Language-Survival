@@ -493,105 +493,72 @@ function fallbackTranslation(text, fromLang, toLang) {
 
 // Modified translateWithAPI to return a proper Promise
 function translateWithAPI(text, fromLang, toLang) {
+
     console.log(`translateWithAPI called with text: "${text}", from: ${fromLang}, to: ${toLang}`);
-    showDebugInfo(`Translating: ${text} (${fromLang}→${toLang})`);
-    
+
     return new Promise((resolve, reject) => {
-        // If source and target are the same, return the original
+
         if (fromLang === toLang) {
-            console.log('Source and target languages are the same, returning original text');
             if (translationResult) {
                 translationResult.textContent = text;
-                showFeedback("Translation complete (same language)");
-            } else {
-                console.error('translationResult element not found for same language case');
             }
             resolve(text);
             return;
         }
-        
-        // Special handling for Telugu text
-        if (fromLang === 'te' && isTeluguText(text) && toLang === 'en') {
-            showDebugInfo("Telugu text detected, using dictionary");
-            
-            // Try to find a match using our expanded dictionary
-            const teluguMatch = findTeluguMatch(text);
-            if (teluguMatch) {
-                console.log(`Found Telugu match: "${text}" → "${teluguMatch}"`);
-                if (translationResult) {
-                    translationResult.textContent = teluguMatch;
-                    showFeedback("Translation complete (Telugu dictionary)");
-                }
-                resolve(teluguMatch);
-                return;
-            }
-        }
-        
-        // Show loading state
-        showFeedback("Translating...");
-        
-        // Use Google Translate API
-        const googleApiUrl = "https://ai-language-survival.onrender.com/translate";
-        
-        console.log('Fetching translation from Google API URL:', googleApiUrl);
-        
-        fetch(googleApiUrl, {
+
+        const apiURL = "https://ai-language-survival.onrender.com/translate";
+
+        fetch(apiURL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 text: text,
-                from: fromLang,
-                to: toLang
+                source: fromLang,
+                target: toLang
             })
-           })
-            .then(response => {
-                console.log('Google API response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Google Translation API response was not ok: ' + response.status);
-                }
-                return response.json();
-            })
-.then(data => {
-    console.log('API response data:', data);
+        })
+        .then(response => {
 
-    let translatedText = data.translatedText || data.translation || data.result;
+            console.log("API status:", response.status);
 
-    if (!translatedText) {
-        throw new Error("Invalid API response format");
-    }
+            if (!response.ok) {
+                throw new Error("Server error: " + response.status);
+            }
 
-    console.log('Extracted translated text:', translatedText);
+            return response.json();
+        })
+        .then(data => {
 
-    if (translationResult) {
-        translationResult.textContent = translatedText;
-    }
+            console.log("API response:", data);
 
-    showFeedback("Translation complete");
-    resolve(translatedText);
-})
-            .catch(error => {
-                console.error('Google Translation error:', error);
-                
-                // Try alternate Google endpoint
-                tryAlternateGoogleEndpoint(text, fromLang, toLang)
-                    .then(resolve)
-                    .catch(error => {
-                        console.error('All translation APIs failed:', error);
-                        
-                        // Final fallback to our dictionary/simulation
-                        const fallbackTranslation = getFallbackTranslation(text, fromLang, toLang);
-                        
-                        if (translationResult) {
-                            translationResult.textContent = fallbackTranslation + " (API fallback)";
-                        }
-                        
-                        showFeedback("Translation complete (fallback)");
-                        showDebugInfo("Using fallback translation");
-                        resolve(fallbackTranslation);
-                    });
-            });
+            if (!data.translated_text) {
+                throw new Error("Invalid response from backend");
+            }
+
+            const translatedText = data.translated_text;
+
+            if (translationResult) {
+                translationResult.textContent = translatedText;
+            }
+
+            showFeedback("Translation complete");
+            resolve(translatedText);
+
+        })
+        .catch(error => {
+
+            console.error("Translation error:", error);
+
+            if (translationResult) {
+                translationResult.textContent = "Translation failed";
+            }
+
+            showFeedback("Translation error");
+            reject(error);
+        });
+
     });
 }
 
@@ -618,24 +585,26 @@ function tryAlternateGoogleEndpoint(text, fromLang, toLang, forceTranslate = fal
                 }
                 return response.json();
             })
-            .then(data => {
-                if (data && (data[0] || data.sentences)) {
-                    let translatedText = '';
-                    
-                    // Handle different response formats
-                    if (Array.isArray(data[0])) {
-                        data[0].forEach(item => {
-                            if (item[0]) {
-                                translatedText += item[0];
-                            }
-                        });
-                    } else if (data.sentences) {
-                        data.sentences.forEach(sentence => {
-                            if (sentence.trans) {
-                                translatedText += sentence.trans;
-                            }
-                        });
-                    }
+           .then(data => {
+
+    console.log("Backend response:", data);
+
+    if (data.translated_text) {
+
+        const translatedText = data.translated_text;
+
+        if (translationResult) {
+            translationResult.textContent = translatedText;
+        }
+
+        showFeedback("Translation complete");
+        resolve(translatedText);
+
+    } else {
+        throw new Error("Invalid response from backend");
+    }
+
+})
                     
                     if (translationResult) {
                         translationResult.textContent = translatedText;
