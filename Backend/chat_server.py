@@ -122,43 +122,46 @@ def detect_language():
         print(f"Error detecting language: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/translate', methods=['POST'])
+@app.route('/translate', methods=['POST'])
 def translate_text():
     """
     Translate text from source language to target language
     """
     try:
         data = request.get_json()
-        text = data.get('q', '')
-        source_lang = data.get('source', 'auto')
-        target_lang = data.get('target', 'en')
-        
+
+        text = data.get('text', '')
+        source_lang = data.get('from', 'auto')
+        target_lang = data.get('to', 'en')
+
         if not text:
             return jsonify({'error': 'No text provided'}), 400
-        
-        # Use MyMemory API for translation
-        api_url = f"https://api.mymemory.translated.net/get?q={text}&langpair={source_lang}|{target_lang}"
-        
-        response = requests.get(api_url)
+
+        # LibreTranslate API
+        url = "https://libretranslate.de/translate"
+
+        payload = {
+            "q": text,
+            "source": source_lang,
+            "target": target_lang,
+            "format": "text"
+        }
+
+        response = requests.post(url, json=payload)
         response.raise_for_status()
-        
-        # Parse the response
+
         result = response.json()
-        
-        # Extract translated text
-        if result and 'responseData' in result and 'translatedText' in result['responseData']:
-            translated_text = result['responseData']['translatedText']
-            return jsonify({
-                'translatedText': translated_text,
-                'source': source_lang,
-                'target': target_lang
-            })
-        else:
-            return jsonify({'error': 'Translation failed'}), 500
-    
+        translated_text = result.get("translatedText", text)
+
+        return jsonify({
+            "translated_text": translated_text,
+            "source": source_lang,
+            "target": target_lang
+        })
+
     except Exception as e:
         print(f"Error translating text: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
