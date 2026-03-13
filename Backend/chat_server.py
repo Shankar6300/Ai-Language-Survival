@@ -103,24 +103,20 @@ def translate_text():
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        # LibreTranslate API
-        url = "https://libretranslate.de/translate"
-
-        payload = {
+        # Use MyMemory API since libretranslate.de disabled its free tier
+        url = "https://api.mymemory.translated.net/get"
+        params = {
             "q": text,
-            "source": source_lang,
-            "target": target_lang,
-            "format": "text"
+            "langpair": f"{source_lang}|{target_lang}"
         }
 
-        response = requests.post(url, json=payload)
+        response = requests.get(url, params=params)
         response.raise_for_status()
 
         try:
             result = response.json()
-            translated_text = result.get("translatedText", text)
+            translated_text = result.get("responseData", {}).get("translatedText", text)
         except Exception:
-            # libretranslate.de currently returns HTML on free nodes, catch the JSONDecodeError
             translated_text = text
 
         return jsonify({
