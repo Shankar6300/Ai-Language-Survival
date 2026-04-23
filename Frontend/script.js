@@ -585,26 +585,10 @@ function tryAlternateGoogleEndpoint(text, fromLang, toLang, forceTranslate = fal
                 }
                 return response.json();
             })
-           .then(data => {
-
-    console.log("Backend response:", data);
-
-    if (data.translated_text) {
-
-        const translatedText = data.translated_text;
-
-        if (translationResult) {
-            translationResult.textContent = translatedText;
-        }
-
-        showFeedback("Translation complete");
-        resolve(translatedText);
-
-    } else {
-        throw new Error("Invalid response from backend");
-    }
-
-})
+            .then(data => {
+                if (data && data[0] && data[0][0] && data[0][0][0]) {
+                    const translatedText = data[0][0][0];
+                    console.log('Extracted translated text from alternate endpoint:', translatedText);
                     
                     if (translationResult) {
                         translationResult.textContent = translatedText;
@@ -777,6 +761,7 @@ function isTeluguText(text) {
     return teluguPattern.test(text);
 }
 
+<<<<<<< HEAD
 // Translation with MyMemory API (fallback)
 function translateWithMyMemory(text, fromLang, toLang) {
     console.log('Falling back to MyMemory API for translation');
@@ -835,7 +820,6 @@ function translateWithMyMemory(text, fromLang, toLang) {
             });
     });
 }
-
 // Keep the original function as a fallback
 function getFallbackTranslation(userMessage, fromLang, toLang) {
     // If source and target are the same, return the original
@@ -1378,6 +1362,7 @@ function transliterateToArabic(text) {
     
     return text;
 }
+
 
 // Initialize speech recognition for voice input
 function initializeSpeechRecognition(voiceBtn, userInput, fromLanguageSelect) {
