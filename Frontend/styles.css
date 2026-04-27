@@ -512,17 +512,21 @@ footer p {
 .mission-statement {
     background: linear-gradient(135deg, #2c3e50, #1a2530);
     color: white;
-    padding: 60px 20px;
+    padding: 80px 30px;
     text-align: center;
-    border-radius: 15px;
-    margin: 40px auto;
+    border-radius: 20px;
+    margin: 60px auto;
+    width: 90%;
     max-width: 1200px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    display: block; /* Ensure it doesn't squash */
+    clear: both;
 }
 
 .mission-statement .section-title {
     color: white;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
+    font-size: 2.2rem;
 }
 
 .mission-statement .section-title::after {
@@ -530,9 +534,9 @@ footer p {
 }
 
 .mission-text {
-    font-size: 1.3rem;
-    line-height: 1.8;
-    max-width: 900px;
+    font-size: 1.5rem;
+    line-height: 1.9;
+    max-width: 1000px;
     margin: 0 auto;
     font-weight: 300;
 }
@@ -541,29 +545,41 @@ footer p {
     font-weight: 700;
     color: #3498db;
     background: rgba(255, 255, 255, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
 }
 
 /* SEO Content Section */
 .seo-content {
-    background-color: #f9f9f9;
-    padding: 60px 20px;
-    border-radius: 15px;
-    margin: 40px auto;
+    background-color: #ffffff;
+    padding: 80px 30px;
+    border-radius: 20px;
+    margin: 60px auto;
+    width: 90%;
     max-width: 1200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    display: block; /* Ensure it doesn't squash */
+    clear: both;
+}
+
+.seo-content .section-title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: #2c3e50;
 }
 
 .content-wrapper p {
-    margin-bottom: 20px;
-    line-height: 1.7;
-    color: #555;
-    font-size: 1.1rem;
+    margin-bottom: 25px;
+    line-height: 1.8;
+    color: #444;
+    font-size: 1.15rem;
+    text-align: left;
 }
 
 .content-wrapper strong {
     color: #2c3e50;
     border-bottom: 2px solid #3498db;
+    padding-bottom: 2px;
 }
 
 /* Features Section */
