@@ -3,15 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="H_hIj8p179dljaLq7hhqFle3psw3gacxvrb0k680Aug" />
-    <title>Login - AI Language Survival Guide | Access Your Travel Assistant</title>
-    <meta name="description" content="Log in to your AI Language Survival Guide account to access your saved phrases, preferred languages, and personal AI travel assistant.">
-    <meta name="keywords" content="AI language translator login, AI travel assistant, Travel language survival guide, Language translation tools">
-    <meta property="og:title" content="Login - AI Language Survival Guide">
-    <meta property="og:description" content="Log in to your AI Language Survival Guide account to access your saved phrases and personal AI travel assistant.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>Login – AI Language Survival Guide | Access Your Free Travel Translator</title>
+    <meta name="description" content="Sign in to your AI Language Survival Guide account to access your saved travel phrases, preferred languages, and personal AI travel communication tool. Free online language translator for travelers.">
+    <meta name="keywords" content="AI language translator for travelers login, AI travel communication tool, free online language translator tool, language survival guide for tourists, multilingual travel assistant online">
+    <meta name="author" content="AI Language Survival Guide">
+    <meta name="robots" content="noindex, follow">
+    <meta name="theme-color" content="#6c63ff">
+
+    <!-- Google Site Verification -->
+    <meta name="google-site-verification" content="H_hIj8p179dljaLq7hhqFle3psw3gacxvrb0k680Aug">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ai-language-survival.vercel.app/login.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Login – AI Language Survival Guide">
+    <meta property="og:description" content="Sign in to access your free AI travel communication tool and saved travel phrases.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ai-language-survival.vercel.app/login.html">
-    <link rel="canonical" href="https://ai-language-survival.vercel.app/login.html">
+    <meta property="og:site_name" content="AI Language Survival Guide">
+
+    <!-- Fonts & Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="script.js" defer></script>
@@ -19,15 +37,17 @@
 <body>
     <header>
         <div class="logo">
-            <span class="logo-text">AI Language Survival Guide</span>
+            <a href="index.html" aria-label="AI Language Survival Guide Home">
+                <span class="logo-text">AI Language Survival Guide</span>
+            </a>
         </div>
-        <nav>
+        <nav aria-label="Main navigation">
             <ul>
                 <li><a href="index.html">Home</a></li>
             </ul>
         </nav>
         <div class="auth-section">
-            <a href="login.html" id="login-btn">Login</a>
+            <a href="login.html" id="login-btn" aria-current="page">Login</a>
             <a href="register.html" id="register-btn">Register</a>
         </div>
     </header>
@@ -35,18 +55,20 @@
     <main class="auth-container">
         <div class="auth-form-container">
             <h1>Welcome Back</h1>
-            <p>Sign in to continue your language learning journey</p>
-            
-            <form class="auth-form">
+            <p>Sign in to continue using your free <strong>AI language translator for travelers</strong></p>
+
+            <form class="auth-form" id="login-form" aria-label="Login form">
                 <div class="form-group">
-                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <label for="username" class="sr-only">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username" required autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn-primary btn-full">Sign in</button>
+                <button type="submit" class="btn-primary btn-full" id="login-submit-btn">Sign in</button>
             </form>
-            
+
             <div class="social-login">
                 <p class="or-divider"><span>or</span></p>
                 <div id="g_id_onload"
@@ -66,20 +88,20 @@
                      data-width="280">
                 </div>
             </div>
-            
-            <p class="auth-redirect">Don't have an account? <a href="register.html">Sign up</a></p>
+
+            <p class="auth-redirect">Don't have an account? <a href="register.html">Sign up free</a></p>
         </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 AI Language Survival Guide. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#" class="social-icon">f</a>
-                <a href="#" class="social-icon">t</a>
-                <a href="#" class="social-icon">in</a>
+            <p>&copy; 2025 AI Language Survival Guide. All rights reserved. | <a href="index.html">Free Online Language Translator for Travelers</a></p>
+            <div class="social-links" aria-label="Social media links">
+                <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
             </div>
         </div>
     </footer>
 </body>
-</html> 
+</html>

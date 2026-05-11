@@ -1,3 +1,17 @@
 User-agent: *
 Allow: /
+Disallow: /logout.html
+Disallow: /login.html
+Disallow: /register.html
+
+# Priority pages for crawling
+Allow: /index.html
+Allow: /chat.html
+Allow: /phrases.html
+Allow: /profile.html
+
+# Sitemap location
 Sitemap: https://ai-language-survival.vercel.app/sitemap.xml
+
+# Crawl-delay for responsible crawling
+Crawl-delay: 1
