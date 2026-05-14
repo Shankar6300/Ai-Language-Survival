@@ -4,34 +4,38 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- Homepage - Highest Priority -->
   <url>
     <loc>https://ai-language-survival.vercel.app/</loc>
-    <lastmod>2025-05-11</lastmod>
+    <lastmod>2025-05-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- AI Translator Page - Very High Priority -->
+  <!-- Primary SEO Landing Page - AI Travel Survival Assistant -->
+  <url>
+    <loc>https://ai-language-survival.vercel.app/ai-travel-survival-assistant.html</loc>
+    <lastmod>2025-05-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
   <url>
     <loc>https://ai-language-survival.vercel.app/chat.html</loc>
-    <lastmod>2025-05-11</lastmod>
+    <lastmod>2025-05-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Survival Phrases Page - High Priority -->
   <url>
     <loc>https://ai-language-survival.vercel.app/phrases.html</loc>
-    <lastmod>2025-05-11</lastmod>
+    <lastmod>2025-05-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Profile Page -->
   <url>
     <loc>https://ai-language-survival.vercel.app/profile.html</loc>
-    <lastmod>2025-05-11</lastmod>
+    <lastmod>2025-05-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
