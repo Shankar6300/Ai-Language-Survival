@@ -79,6 +79,11 @@ function handleGoogleSignUp(response) {
     handleGoogleSignIn(response);
 }
 
+// Expose callbacks on the global window object for Google Identity Services
+window.decodeJwtResponse = decodeJwtResponse;
+window.handleGoogleSignIn = handleGoogleSignIn;
+window.handleGoogleSignUp = handleGoogleSignUp;
+
 // ============================================
 // END GLOBAL CALLBACKS
 // ============================================
