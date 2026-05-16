@@ -153,23 +153,28 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeProfilePage();
     }
     
-    // Handle login form submission
-    const loginForm = document.querySelector('.auth-form');
+    // Handle login form submission (select by id for precision)
+    const loginForm = document.getElementById('login-form') || document.querySelector('.auth-form');
     if (loginForm) {
         console.log('Login form found, adding event listener');
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
+            const username = document.getElementById('username') ? document.getElementById('username').value : '';
+            const password = document.getElementById('password') ? document.getElementById('password').value : '';
+
+            console.log('Login handler invoked');
             console.log('Login form submitted with username:', username);
-            
-            // For demo purposes, accept any login
-            localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('username', username);
-            
-            // Redirect to home page
-            window.location.href = '/index.html';
+            try {
+                // For demo purposes, accept any login
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('username', username);
+
+                // Use assign to navigate explicitly
+                window.location.assign('/index.html');
+            } catch (err) {
+                console.error('Error during login redirect:', err);
+                showDebugInfo && showDebugInfo('Login redirect error: ' + err);
+            }
         });
     }
     
