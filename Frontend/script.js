@@ -67,7 +67,7 @@ function handleGoogleSignIn(response) {
         localStorage.setItem('userPicture', responsePayload.picture);
         
         // Redirect to home page
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
     } catch (error) {
         console.error("Error processing Google Sign-In:", error);
         alert('Sign-in failed. Please try again.');
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('username', username);
             
             // Redirect to home page
-            window.location.href = 'index.html';
+            window.location.href = '/index.html';
         });
     }
     
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('userPicture');
             
             // Redirect to login page
-            window.location.href = 'login.html';
+            window.location.href = '/login.html';
         });
     }
     
