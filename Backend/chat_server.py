@@ -107,6 +107,27 @@ def translate_via_libretranslate(text, source_lang, target_lang):
     return result.get("translatedText")
 
 
+def translate_via_google_undocumented(text, source_lang, target_lang):
+    """Use Google's undocumented translate_a endpoint as a pragmatic fallback."""
+    try:
+        sl = source_lang if source_lang and source_lang != 'auto' else 'auto'
+        url = (
+            f"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl={sl}"
+            f"&tl={target_lang}&q={requests.utils.requote_uri(text)}"
+        )
+        resp = requests.get(url, timeout=15)
+        resp.raise_for_status()
+        data = resp.json()
+        # data[0] is an array of sentence segments
+        if data and isinstance(data, list) and len(data) > 0:
+            segments = data[0]
+            translated = ''.join([s[0] for s in segments if s and len(s) > 0 and s[0]])
+            return translated
+    except Exception as e:
+        print(f"Google undocumented translate failed: {e}")
+    return None
+
+
 def translate_via_mymemory(text, source_lang, target_lang):
     """Fallback translation when LibreTranslate is unavailable."""
     api_url = f"https://api.mymemory.translated.net/get?q={text}&langpair={source_lang}|{target_lang}"
@@ -178,7 +199,10 @@ def translate_text():
         translated_text = None
 
         try:
-            translated_text = translate_via_libretranslate(text, source_lang, target_lang)
+            # Try Google undocumented endpoint first for broader coverage
+            translated_text = translate_via_google_undocumented(text, source_lang, target_lang)
+            if not translated_text:
+                translated_text = translate_via_libretranslate(text, source_lang, target_lang)
         except Exception as libre_error:
             print(f"LibreTranslate failed: {str(libre_error)}")
 
@@ -219,7 +243,9 @@ def api_translate_text():
         translated_text = None
 
         try:
-            translated_text = translate_via_libretranslate(text, source_lang, target_lang)
+            translated_text = translate_via_google_undocumented(text, source_lang, target_lang)
+            if not translated_text:
+                translated_text = translate_via_libretranslate(text, source_lang, target_lang)
         except Exception as libre_error:
             print(f"LibreTranslate failed: {str(libre_error)}")
 
