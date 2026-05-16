@@ -107,6 +107,22 @@ def translate_via_libretranslate(text, source_lang, target_lang):
     return result.get("translatedText")
 
 
+def lookup_slang_translation(text, source_lang, target_lang):
+    """Check the curated slang dictionary for an exact English match."""
+    if not text or not source_lang or source_lang != 'en':
+        return None
+    key = text.strip().lower()
+    # Try exact match first
+    if key in SLANG_DICT and target_lang in SLANG_DICT[key]:
+        return SLANG_DICT[key][target_lang]
+    # Try fallback: remove punctuation
+    import re
+    cleaned = re.sub(r"[^a-z0-9\s]", "", key)
+    if cleaned in SLANG_DICT and target_lang in SLANG_DICT[cleaned]:
+        return SLANG_DICT[cleaned][target_lang]
+    return None
+
+
 def translate_via_google_undocumented(text, source_lang, target_lang):
     """Use Google's undocumented translate_a endpoint as a pragmatic fallback."""
     try:
@@ -196,7 +212,15 @@ def translate_text():
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        translated_text = None
+        # Check curated slang dictionary for exact English matches
+        translated_text = lookup_slang_translation(text, source_lang, target_lang)
+        if translated_text:
+            return jsonify({
+                "translated_text": translated_text,
+                "source": source_lang,
+                "target": target_lang,
+                "note": "curated_slang"
+            })
 
         try:
             # Try Google undocumented endpoint first for broader coverage
@@ -240,7 +264,16 @@ def api_translate_text():
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        translated_text = None
+        # Check curated slang dictionary for exact English matches
+        translated_text = lookup_slang_translation(text, source_lang, target_lang)
+        if translated_text:
+            return jsonify({
+                'translatedText': translated_text,
+                'translated_text': translated_text,
+                'source': source_lang,
+                'target': target_lang,
+                'note': 'curated_slang'
+            })
 
         try:
             translated_text = translate_via_google_undocumented(text, source_lang, target_lang)
