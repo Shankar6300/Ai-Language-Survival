@@ -9,9 +9,7 @@ Allow: /index.html
 Allow: /chat.html
 Allow: /phrases.html
 Allow: /profile.html
+Allow: /ai-language-survival-guide-for-travelers
 
 # Sitemap location
 Sitemap: https://ai-language-survival.vercel.app/sitemap.xml
-
-# Crawl-delay for responsible crawling
-Crawl-delay: 1

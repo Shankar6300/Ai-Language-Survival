@@ -35,7 +35,8 @@
   ],
   "rewrites": [
     {"source": "/", "destination": "/index.html"},
-    {"source": "/ai-travel-survival-assistant", "destination": "/ai-travel-survival-assistant.html"}
+    {"source": "/ai-travel-survival-assistant", "destination": "/ai-travel-survival-assistant.html"},
+    {"source": "/ai-language-survival-guide-for-travelers", "destination": "/ai-language-survival-guide-for-travelers.html"}
   ],
   "cleanUrls": false,
   "trailingSlash": false
