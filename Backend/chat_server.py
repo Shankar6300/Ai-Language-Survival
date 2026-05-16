@@ -82,6 +82,43 @@ CHAT_RESPONSES = {
 # Track conversation history for each session
 CONVERSATIONS = {}
 
+
+def extract_translation_request(data):
+    """Normalize multiple request shapes used by the frontend and older clients."""
+    text = data.get('text') or data.get('q', '')
+    source_lang = data.get('from') or data.get('source', 'auto')
+    target_lang = data.get('to') or data.get('target', 'en')
+    return text, source_lang, target_lang
+
+
+def translate_via_libretranslate(text, source_lang, target_lang):
+    """Try LibreTranslate first because it returns high-quality results when available."""
+    url = "https://libretranslate.de/translate"
+    payload = {
+        "q": text,
+        "source": source_lang,
+        "target": target_lang,
+        "format": "text"
+    }
+
+    response = requests.post(url, json=payload, timeout=20)
+    response.raise_for_status()
+    result = response.json()
+    return result.get("translatedText")
+
+
+def translate_via_mymemory(text, source_lang, target_lang):
+    """Fallback translation when LibreTranslate is unavailable."""
+    api_url = f"https://api.mymemory.translated.net/get?q={text}&langpair={source_lang}|{target_lang}"
+    response = requests.get(api_url, timeout=20)
+    response.raise_for_status()
+    result = response.json()
+
+    if result and 'responseData' in result and 'translatedText' in result['responseData']:
+        return result['responseData']['translatedText']
+
+    return None
+
 @app.route('/')
 def home():
     """Render the chat interface"""
@@ -130,28 +167,29 @@ def translate_text():
     try:
         data = request.get_json()
 
-        text = data.get('text', '')
-        source_lang = data.get('from', 'auto')
-        target_lang = data.get('to', 'en')
+        if not data:
+            return jsonify({'error': 'No JSON body provided'}), 400
+
+        text, source_lang, target_lang = extract_translation_request(data)
 
         if not text:
             return jsonify({'error': 'No text provided'}), 400
 
-        # LibreTranslate API
-        url = "https://libretranslate.de/translate"
+        translated_text = None
 
-        payload = {
-            "q": text,
-            "source": source_lang,
-            "target": target_lang,
-            "format": "text"
-        }
+        try:
+            translated_text = translate_via_libretranslate(text, source_lang, target_lang)
+        except Exception as libre_error:
+            print(f"LibreTranslate failed: {str(libre_error)}")
 
-        response = requests.post(url, json=payload)
-        response.raise_for_status()
+        if not translated_text:
+            try:
+                translated_text = translate_via_mymemory(text, source_lang, target_lang)
+            except Exception as mymemory_error:
+                print(f"MyMemory translation failed: {str(mymemory_error)}")
 
-        result = response.json()
-        translated_text = result.get("translatedText", text)
+        if not translated_text:
+            translated_text = text
 
         return jsonify({
             "translated_text": translated_text,
@@ -162,6 +200,48 @@ def translate_text():
     except Exception as e:
         print(f"Error translating text: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/translate', methods=['POST'])
+def api_translate_text():
+    """Compatibility alias for clients using the /api/translate contract."""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'error': 'No JSON body provided'}), 400
+
+        text, source_lang, target_lang = extract_translation_request(data)
+
+        if not text:
+            return jsonify({'error': 'No text provided'}), 400
+
+        translated_text = None
+
+        try:
+            translated_text = translate_via_libretranslate(text, source_lang, target_lang)
+        except Exception as libre_error:
+            print(f"LibreTranslate failed: {str(libre_error)}")
+
+        if not translated_text:
+            try:
+                translated_text = translate_via_mymemory(text, source_lang, target_lang)
+            except Exception as mymemory_error:
+                print(f"MyMemory translation failed: {str(mymemory_error)}")
+
+        if not translated_text:
+            translated_text = text
+
+        return jsonify({
+            'translatedText': translated_text,
+            'translated_text': translated_text,
+            'source': source_lang,
+            'target': target_lang
+        })
+
+    except Exception as e:
+        print(f"Error translating text: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
