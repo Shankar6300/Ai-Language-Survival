@@ -648,13 +648,10 @@ function tryAlternateGoogleEndpoint(text, fromLang, toLang, forceTranslate = fal
         // Alternative endpoints with different parameters
         let altGoogleUrl;
         
-        if (forceTranslate && fromLang === 'te') {
-            // Special case for Telugu - try the official translate.google.com endpoint
-            // with more parameters to force actual translation
-            altGoogleUrl = `https://translate.googleapis.com/translate_a/t?client=gtx&sl=${fromLang}&tl=${toLang}&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&source=bh&ssel=0&tsel=0&kc=1&q=${encodeURIComponent(text)}`;
-        } else {
-            altGoogleUrl = `https://translate.google.com/translate_a/single?client=at&dt=t&sl=${fromLang}&tl=${toLang}&q=${encodeURIComponent(text)}`;
-        }
+        // Prefer the public translate.googleapis.com endpoint for client-side CORS-friendly requests
+        // Use 'auto' for source if requested
+        const sl = (fromLang && fromLang !== 'auto') ? fromLang : 'auto';
+        altGoogleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${sl}&tl=${toLang}&q=${encodeURIComponent(text)}`;
         
         fetch(altGoogleUrl)
             .then(response => {
