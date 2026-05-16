@@ -84,6 +84,45 @@ window.decodeJwtResponse = decodeJwtResponse;
 window.handleGoogleSignIn = handleGoogleSignIn;
 window.handleGoogleSignUp = handleGoogleSignUp;
 
+// Programmatically initialize Google Identity Services if available
+function initGoogleIdentity() {
+    try {
+        const onloadDiv = document.getElementById('g_id_onload');
+        const signInDiv = document.querySelector('.g_id_signin');
+        if (!onloadDiv) return;
+
+        const clientId = onloadDiv.getAttribute('data-client_id');
+        const callbackName = onloadDiv.getAttribute('data-callback');
+        const callbackFn = (callbackName && typeof window[callbackName] === 'function') ? window[callbackName] : handleGoogleSignIn;
+
+        if (window.google && google.accounts && google.accounts.id) {
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: callbackFn,
+                ux_mode: onloadDiv.getAttribute('data-ux_mode') || 'popup'
+            });
+
+            if (signInDiv) {
+                google.accounts.id.renderButton(signInDiv, {
+                    theme: signInDiv.getAttribute('data-theme') || 'outline',
+                    size: signInDiv.getAttribute('data-size') || 'large',
+                    type: signInDiv.getAttribute('data-type') || 'standard'
+                });
+            }
+
+            // Optionally show One Tap prompt
+            // google.accounts.id.prompt();
+        }
+    } catch (err) {
+        console.warn('initGoogleIdentity error:', err);
+    }
+}
+
+window.addEventListener('load', function() {
+    // Delay a bit to ensure Google script has executed
+    setTimeout(initGoogleIdentity, 150);
+});
+
 // ============================================
 // END GLOBAL CALLBACKS
 // ============================================
