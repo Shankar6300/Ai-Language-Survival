@@ -31,8 +31,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Load main script BEFORE Google's script so callbacks are defined -->
     <script src="script.js" defer></script>
+    <!-- Google Sign-In library loads after our callbacks are defined -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <header>
@@ -90,7 +92,7 @@
             <div class="social-login">
                 <p class="or-divider"><span>or</span></p>
                 <div id="g_id_onload"
-                     data-client_id="335381426176-f0oq3dhee73g45i80u3kneotq462jmsm.apps.googleusercontent.com"
+                     data-client_id="721203537926-98l6moj4ojodl8ipf94kb9obafig7ifm.apps.googleusercontent.com"
                      data-context="signup"
                      data-ux_mode="popup"
                      data-callback="handleGoogleSignUp"

@@ -31,6 +31,58 @@ let translationResult;
 let fromLanguageSelect;
 let toLanguageSelect;
 
+// ============================================
+// GOOGLE SIGN-IN CALLBACK FUNCTIONS (GLOBAL)
+// ============================================
+// These MUST be defined at the global level before Google's library initializes
+
+function decodeJwtResponse(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+}
+
+function handleGoogleSignIn(response) {
+    console.log("Google Sign-In response received");
+    try {
+        // Decode the JWT token to extract profile information
+        const responsePayload = decodeJwtResponse(response.credential);
+        console.log("ID: " + responsePayload.sub);
+        console.log('Full Name: ' + responsePayload.name);
+        console.log("Email: " + responsePayload.email);
+
+        // Store user info in localStorage (for demo purposes)
+        localStorage.setItem('userLoggedIn', 'true');
+        localStorage.setItem('username', responsePayload.name);
+        localStorage.setItem('userEmail', responsePayload.email);
+        localStorage.setItem('userPicture', responsePayload.picture);
+        
+        // Redirect to home page
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error("Error processing Google Sign-In:", error);
+        alert('Sign-in failed. Please try again.');
+    }
+}
+
+function handleGoogleSignUp(response) {
+    // For the demo, we'll use the same handler for both sign-in and sign-up
+    handleGoogleSignIn(response);
+}
+
+// ============================================
+// END GLOBAL CALLBACKS
+// ============================================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded');
     
@@ -267,49 +319,6 @@ function initializeQuoteRotation() {
             
         }, 10000); // Change every 10 seconds
     }
-}
-
-// Google Sign-In Callback Functions
-function handleGoogleSignIn(response) {
-    // Decode the JWT token to extract profile information
-    const responsePayload = decodeJwtResponse(response.credential);
-    console.log("ID: " + responsePayload.sub);
-    console.log('Full Name: ' + responsePayload.name);
-    console.log('Given Name: ' + responsePayload.given_name);
-    console.log('Family Name: ' + responsePayload.family_name);
-    console.log("Image URL: " + responsePayload.picture);
-    console.log("Email: " + responsePayload.email);
-
-    // Store user info in localStorage (for demo purposes)
-    // In a real app, you would send this to your server for verification
-    localStorage.setItem('userLoggedIn', 'true');
-    localStorage.setItem('username', responsePayload.name);
-    localStorage.setItem('userEmail', responsePayload.email);
-    localStorage.setItem('userPicture', responsePayload.picture);
-    
-    // Redirect to home page
-    window.location.href = 'index.html';
-}
-
-function handleGoogleSignUp(response) {
-    // For the demo, we'll use the same handler for both sign-in and sign-up
-    handleGoogleSignIn(response);
-}
-
-// Helper function to decode the JWT token
-function decodeJwtResponse(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-        atob(base64)
-            .split('')
-            .map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            })
-            .join('')
-    );
-
-    return JSON.parse(jsonPayload);
 }
 
 // Add hardcoded translations for common Telugu phrases with high-quality translations
