@@ -564,7 +564,7 @@ function translateWithAPI(text, fromLang, toLang) {
             return;
         }
 
-        const apiURL = "https://ai-language-survival.onrender.com/translate";
+        const apiURL = "https://ai-language-survival.onrender.com/api/translate";
 
         fetch(apiURL, {
             method: "POST",
@@ -591,11 +591,11 @@ function translateWithAPI(text, fromLang, toLang) {
 
             console.log("API response:", data);
 
-            if (!data.translated_text) {
+            const translatedText = data.translated_text || data.translatedText;
+
+            if (!translatedText) {
                 throw new Error("Invalid response from backend");
             }
-
-            const translatedText = data.translated_text;
 
             if (translationResult) {
                 translationResult.textContent = translatedText;
