@@ -6,6 +6,16 @@ import json
 import time
 import random
 
+# Load slang/profanity dictionary for curated translations
+SLANG_DICT = {}
+try:
+    slang_path = os.path.join(os.path.dirname(__file__), 'slang_dictionary.json')
+    if os.path.exists(slang_path):
+        with open(slang_path, 'r', encoding='utf-8') as f:
+            SLANG_DICT = json.load(f)
+except Exception as e:
+    print(f"Failed to load slang dictionary: {e}")
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
