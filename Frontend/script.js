@@ -819,7 +819,6 @@ function isTeluguText(text) {
     return teluguPattern.test(text);
 }
 
-<<<<<<< HEAD
 // Translation with MyMemory API (fallback)
 function translateWithMyMemory(text, fromLang, toLang) {
     console.log('Falling back to MyMemory API for translation');
