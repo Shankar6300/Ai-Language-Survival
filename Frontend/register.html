@@ -33,6 +33,25 @@
     <link rel="stylesheet" href="styles.css">
     <!-- Load main script BEFORE Google's script so callbacks are defined -->
     <script src="script.js" defer></script>
+    <!-- Defensive stub: if script.js fails to parse on the deployed site,
+         expose minimal globals so Google's GSI won't throw 'callback not a function'.
+         The real handlers in script.js will overwrite these when/if it executes. -->
+    <script>
+        // Minimal safe stubs for GSI to call even if script.js is broken on the page
+        window.handleGoogleSignIn = window.handleGoogleSignIn || function(response) {
+            console.warn('GSI stub: handleGoogleSignIn invoked before app script loaded');
+            window.__deferredGSIResponse = response;
+        };
+        window.decodeJwtResponse = window.decodeJwtResponse || function(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c){return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);}).join('')));
+            } catch (e) {
+                return {};
+            }
+        };
+    </script>
     <!-- Google Sign-In library loads after our callbacks are defined -->
     <script src="https://accounts.google.com/gsi/client" defer></script>
 </head>
