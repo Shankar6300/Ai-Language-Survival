@@ -597,6 +597,26 @@ function translateWithAPI(text, fromLang, toLang) {
                 throw new Error("Invalid response from backend");
             }
 
+            // If backend returned the same text (no-op), try the client-side alternate Google endpoint
+            const normalizedOriginal = text.trim().toLowerCase();
+            const normalizedTranslated = translatedText.trim().toLowerCase();
+
+            if (normalizedTranslated === normalizedOriginal) {
+                console.log('Backend returned unchanged text; trying alternate client-side Google endpoint');
+                tryAlternateGoogleEndpoint(text, fromLang, toLang, true)
+                    .then(googleResult => {
+                        if (translationResult) translationResult.textContent = googleResult;
+                        showFeedback('Translation complete (Google fallback)');
+                        resolve(googleResult);
+                    })
+                    .catch(err => {
+                        if (translationResult) translationResult.textContent = translatedText;
+                        showFeedback('Translation complete (backend result)');
+                        resolve(translatedText);
+                    });
+                return;
+            }
+
             if (translationResult) {
                 translationResult.textContent = translatedText;
             }
